@@ -1,0 +1,100 @@
+package com.app.ecomapplication.service;
+
+import com.app.ecomapplication.dto.AddressDTO;
+import com.app.ecomapplication.dto.UserRequest;
+import com.app.ecomapplication.dto.UserResponse;
+import com.app.ecomapplication.model.Address;
+import com.app.ecomapplication.repository.UserRepository;
+import com.app.ecomapplication.model.User;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+
+@Service
+@RequiredArgsConstructor
+public class UserService {
+
+        private final UserRepository userRepository;
+        //private List<User> userList = new ArrayList<>();
+
+        //private Long nextId  = 1L;
+
+        public List<UserResponse> fetchllUsers() {
+            //List<User> userList = userRepository.findAll();
+            return userRepository.findAll().stream()
+                    .map(this::mapToUserResponse)
+                    .collect(Collectors.toList());
+        }
+
+        public void addUser(UserRequest userRequest) {
+            //user.setId(nextId++);
+            User user = new User();
+            updateUserFromRequest(user, userRequest);
+            userRepository.save(user);
+        }
+
+        public Optional<UserResponse> fetchUser(Long id) {
+            return userRepository.findById(id)
+                    .map(this::mapToUserResponse);
+
+           //return userList.stream().filter(user -> user.getId().equals(id)).findFirst();
+        }
+
+        public boolean updateUser(Long id, UserRequest updatedUserRequest) {
+            return userRepository.findById(id)
+            //return userList.stream().filter(user -> user.getId().equals(id)).findFirst()
+            .map(existingUser -> {
+                updateUserFromRequest(existingUser, updatedUserRequest);
+               //existingUser.setFirstName(updatedUser.getFirstName());
+               //existingUser.setLastName(updatedUser.getLastName());
+               userRepository.save(existingUser);
+               return true;
+                // true;
+            }).orElse(false);
+        }
+
+        private void updateUserFromRequest(User user, UserRequest userRequest) {
+            user.setFirstName(userRequest.getFirstName());
+            user.setLastName(userRequest.getLastName());
+            user.setEmail(userRequest.getEmail());
+            user.setPhoneNumber(userRequest.getPhone());
+            if(userRequest.getAddress() != null) {
+                Address address = new Address();
+                address.setStreet(userRequest.getAddress().getStreet());
+                address.setState(userRequest.getAddress().getState());
+                address.setZipcode(userRequest.getAddress().getZipcode());
+                address.setCity(userRequest.getAddress().getCity());
+                address.setCountry(userRequest.getAddress().getCountry());
+                user.setAddress(address);
+
+            }
+        }
+
+        private UserResponse mapToUserResponse(User user) {
+            UserResponse response = new UserResponse();
+            response.setId(String.valueOf(user.getId()));
+            response.setFirstName(user.getFirstName());
+            response.setLastName(user.getLastName());
+            response.setEmail(user.getEmail());
+            response.setPhone(String.valueOf(user.getPhoneNumber()));
+            response.setRole(user.getRole());
+
+            if(user.getAddress() != null) {
+                AddressDTO addressDTO = new AddressDTO();
+                addressDTO.setStreet(user.getAddress().getStreet());
+                addressDTO.setCity(user.getAddress().getCity());
+                addressDTO.setState(user.getAddress().getState());
+                addressDTO.setCountry(user.getAddress().getCountry());
+                addressDTO.setZipcode(user.getAddress().getZipcode());
+                response.setAddress(addressDTO);
+
+            }
+            return response;
+        }
+    }
+
