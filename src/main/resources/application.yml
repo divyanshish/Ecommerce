@@ -1,60 +1,39 @@
-#spring.application.name=ecom
-#spring.h2.console.enabled=true
-#spring.datasource.url=jdbc:h2:mem:test
-# spring.jpa.show-sql=true
-# spring.jpa.hibernate.ddl-auto=create
-# management.endpoints.web.exposure.include=*
-#endpoint.health.show-details=always
-
 spring:
+  application:
+    name: ecom
   datasource:
-    url: jdbc:postgresql://localhost:5433/divyanshi
-    username: divyanshi
-    password: divyanshi
-
+    url: jdbc:postgresql://localhost:5432/ecomdatabase
+    username: postgres
+    password: Shmkau29@
   jpa:
+    database: POSTGRESQL
     show-sql: true
     hibernate:
       ddl-auto: update
-
-#spring:
-#  application:
- #   name: ecom
- # datasource:
-  #  url: jdbc:postgresql://localhost:5432/ecomdb
-   # username: divyanshi
-    #password: divyanshi
-  #jpa:
-   # database: POSTGRESQL
-    #show-sql: true
-    #hibernate:
-     # ddl-auto: update
-
-    #database-platform: org.hibernate.dialect.PostgreSQLDialectclear
-
- # h2:
-  #  console:
-   #   enabled: true
-  #datasource:
-   # url: jdbc:h2:mem:test
-  #jpa:
-   # show-sql: true
-   # hibernate:
-    #  ddl-auto: create
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+#  h2:
+#    console:
+#      enabled: true
+#  datasource:
+#   url: jdbc:h2:mem:test
+#  jpa:
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: create
 
 management:
   endpoints:
     web:
-     exposure:
-       include: beans, health
+      exposure:
+        include: beans, health
   endpoint:
     health:
       show-details: always
     shutdown:
-  enabled: true
+     enabled: true
   info:
     env:
-      enabled: true
+     enabled: true
 
 server:
   shutdown: graceful
